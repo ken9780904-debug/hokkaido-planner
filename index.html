@@ -1,1 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Family Trip to Hokkaido 2026</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'snow-white': '#F0FFFF',
+                        'ice-blue': '#B3E5FC',
+                        'light-snow-blue': '#E5F3F7',
+                        'deep-sea-blue': '#01579B',
+                        'accent-yellow': '#FFD54F',
+                        'soft-gray': '#F5F5F5'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        body {
+            background-color: #E5F3F7; 
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #334155;
+        }
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background-color: #ffffff; 
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+            position: relative;
+            padding-bottom: 90px;
+        }
+        .header-bg {
+            background-color: #ffffff; 
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); 
+            border-bottom-left-radius: 35px; 
+            border-bottom-right-radius: 35px;
+            z-index: 10; 
+        }
+        .header-image-container {
+            width: 100%;
+            height: 250px; 
+            overflow: hidden;
+            border-bottom-left-radius: 35px; 
+            border-bottom-right-radius: 35px;
+        }
+        .header-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            display: block; 
+        }
+        .snow-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%23fff" opacity="0.8"/><circle cx="20" cy="80" r="0.5" fill="%23fff" opacity="0.6"/><circle cx="70" cy="30" r="1.5" fill="%23fff" opacity="0.9"/></svg>');
+            background-size: 100px 100px;
+            opacity: 0.7;
+            animation: snowfall 10s linear infinite;
+            z-index: 5;
+        }
+        @keyframes snowfall {
+            to { background-position: 100px 100px; }
+        }
+        .side-tab-bar {
+            position: absolute;
+            bottom: 45px; 
+            right: 16px;
+            z-index: 30;
+            display: flex;
+            gap: 8px; 
+        }
+        .tab-button {
+            width: 40px; height: 40px;
+            border-radius: 9999px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); 
+            transition: all 0.2s ease;
+            background-color: #ffffff;
+            color: #B3E5FC;
+        }
+        .tab-button.active {
+            background-color: #01579B;
+            color: #ffffff;
+            transform: scale(1.05);
+        }
+        .app-main { padding-top: 25px !important; position: relative; z-index: 5; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .card-shadow { box-shadow: 0 4px 20px rgba(179, 229, 252, 0.3); }
+        .expense-category-tag {
+            min-width: 50px; height: 50px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; font-weight: bold;
+        }
+        .expenses-banner { background: linear-gradient(135deg, #01579B 0%, #0097A7 100%); }
+        .date-selector-sticky { background-color: #ffffff; border-bottom: 1px solid #f0f0f0; z-index: 20; position: sticky; top: 0; }
+    </style>
+</head>
+<body>
 
+<div id="app" class="app-container">
+    <div class="header-bg relative">
+        <div class="header-image-container">
+            <img src="IMG_4330.PNG" alt="北海道家族旅行" onerror="this.src='https://images.unsplash.com/photo-1548232821-8eb397166164?auto=format&fit=crop&w=800&q=80'">
+        </div>
+        <div class="snow-layer"></div> 
+        <div class="side-tab-bar">
+            <button @click="currentTab = 'itinerary'" :class="{'active': currentTab === 'itinerary'}" class="tab-button"><i class="fa-solid fa-map-location-dot"></i></button>
+            <button @click="currentTab = 'info'" :class="{'active': currentTab === 'info'}" class="tab-button"><i class="fa-solid fa-circle-info"></i></button>
+            <button @click="currentTab = 'shopping'" :class="{'active': currentTab === 'shopping'}" class="tab-button"><i class="fa-solid fa-basket-shopping"></i></button>
+            <button @click="currentTab = 'expenses'" :class="{'active': currentTab === 'expenses'}" class="tab-button"><i class="fa-solid fa-coins"></i></button>
+        </div>
+    </div>
+
+    <main class="p-4 app-main">
+        <div v-if="currentTab === 'itinerary'">
+            <div class="flex overflow-x-auto hide-scrollbar space-x-3 pb-4 mb-2 date-selector-sticky">
+                <div v-for="(day, index) in dates" :key="index" @click="selectedDateIndex = index"
+                     class="flex-shrink-0 w-[58px] h-[68px] rounded-xl flex flex-col items-center justify-center cursor-pointer border-2"
+                     :class="selectedDateIndex === index ? 'bg-deep-sea-blue text-white border-deep-sea-blue' : 'bg-white text-slate-400 border-white'">
+                    <span class="text-sm font-bold">{{ day.weekday }}</span>
+                    <span class="text-xs">{{ day.date }}</span>
+                </div>
+            </div>
+
+            <div v-if="weatherData[selectedDateIndex]" class="mb-4 bg-snow-white border border-ice-blue rounded-2xl p-4 flex justify-between items-center shadow-md">
+                <div class="flex items-center space-x-4">
+                    <i :class="getWeatherIcon(weatherData[selectedDateIndex].condition)" class="text-4xl text-blue-500"></i>
+                    <div>
+                        <span class="text-2xl font-bold">{{ weatherData[selectedDateIndex].temp }}°C</span>
+                        <p class="text-xs text-slate-500">體感: {{ weatherData[selectedDateIndex].feel }}°C</p>
+                    </div>
+                </div>
+                <div class="text-right text-xs">
+                    <p class="font-bold">{{ getWeatherDescription(weatherData[selectedDateIndex].condition) }}</p>
+                    <p v-if="dates[selectedDateIndex].hasCar" class="text-deep-sea-blue"><i class="fa-solid fa-car"></i> 租車日</p>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div v-for="item in currentItinerary" :key="item.id" class="bg-white rounded-3xl p-5 card-shadow border border-ice-blue/50">
+                    <div class="flex items-start">
+                        <div class="mr-4 p-2 rounded-full text-white" :class="getCategoryColor(item.category)">
+                            <i :class="getCategoryIcon(item.category)"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-bold text-slate-800">{{ item.name }}</h3>
+                            <p class="text-xs text-slate-500">{{ item.startTime }} | {{ item.address }}</p>
+                            <p v-if="item.note" class="mt-2 text-xs bg-slate-50 p-2 rounded">{{ item.note }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="currentTab === 'info'" class="space-y-4">
+            <div class="bg-deep-sea-blue p-6 rounded-3xl text-white">
+                <h3 class="font-bold mb-2">匯率換算 (0.215)</h3>
+                <input type="number" v-model="currencyInput" @input="calculateCurrency" class="w-full p-2 rounded text-black">
+                <p class="mt-2">約 NT$ {{ currencyResult }}</p>
+            </div>
+            <div class="bg-white p-5 rounded-3xl card-shadow">
+                <h3 class="font-bold border-b pb-2 mb-2">住宿資訊</h3>
+                <div v-for="h in hotels" class="mb-3 text-sm">
+                    <p class="font-bold">{{ h.name }}</p>
+                    <p class="text-slate-500">{{ h.date }}</p>
+                </div>
+            </div>
+        </div>
+
+        </main>
+</div>
+
+<script>
+    const { createApp, ref, computed, onMounted } = Vue
+    createApp({
+        setup() {
+            const currentTab = ref('itinerary');
+            const selectedDateIndex = ref(0);
+            const currencyInput = ref(10000);
+            const currencyResult = ref(0);
+
+            const dates = ref([
+                { date: '2/1', weekday: '五', hasCar: false },
+                { date: '2/2', weekday: '六', hasCar: true },
+                { date: '2/3', weekday: '日', hasCar: true },
+                { date: '2/4', weekday: '一', hasCar: true },
+                { date: '2/5', weekday: '二', hasCar: true },
+                { date: '2/6', weekday: '三', hasCar: true },
+                { date: '2/7', weekday: '四', hasCar: false }
+            ]);
+
+            const weatherData = ref([
+                { condition: 'snow', temp: '-2', feel: '-8' },
+                { condition: 'snow', temp: '-3', feel: '-10' },
+                { condition: 'snow', temp: '-5', feel: '-12' },
+                { condition: 'snow', temp: '-4', feel: '-11' },
+                { condition: 'snow', temp: '0', feel: '-6' },
+                { condition: 'snow', temp: '1', feel: '-5' },
+                { condition: 'cloudy', temp: '2', feel: '-3' }
+            ]);
+
+            const itineraryData = ref([
+                [{ id: 1, name: '桃園機場報到', startTime: '06:00', category: 'flight', address: 'TPE', note: 'CI0130 08:35起飛' }],
+                [], [], [], [], [], []
+            ]);
+
+            const hotels = ref([
+                { name: '札幌大通東急STAY酒店', date: '2/1 - 2/3' },
+                { name: '富良野酒店', date: '2/3 - 2/4' },
+                { name: '登別溫泉第一瀧本館', date: '2/4 - 2/6' },
+                { name: '札幌西三井花園飯店', date: '2/6 - 2/7' }
+            ]);
+
+            const calculateCurrency = () => currencyResult.value = Math.round(currencyInput.value * 0.215);
+            const getCategoryColor = (cat) => cat === 'flight' ? 'bg-blue-500' : 'bg-green-500';
+            const getCategoryIcon = (cat) => cat === 'flight' ? 'fa-solid fa-plane' : 'fa-solid fa-location-dot';
+            const getWeatherIcon = (cond) => cond === 'snow' ? 'fa-solid fa-snowflake' : 'fa-solid fa-cloud';
+            const getWeatherDescription = (cond) => cond === 'snow' ? '降雪' : '多雲';
+
+            onMounted(() => calculateCurrency());
+
+            return {
+                currentTab, dates, selectedDateIndex, itineraryData, hotels,
+                weatherData, currencyInput, currencyResult, calculateCurrency,
+                getCategoryColor, getCategoryIcon, getWeatherIcon, getWeatherDescription,
+                currentItinerary: computed(() => itineraryData.value[selectedDateIndex.value])
+            };
+        }
+    }).mount('#app');
+</script>
+</body>
+</html>
